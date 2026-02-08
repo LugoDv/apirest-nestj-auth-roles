@@ -3,6 +3,8 @@ import { CatsModule } from './cats/cats.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './infra/database.module';
 import { BreedModule } from './breed/breed.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -13,6 +15,8 @@ import { BreedModule } from './breed/breed.module';
     }),
     DatabaseModule,
     BreedModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
