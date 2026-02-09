@@ -52,12 +52,23 @@ export class AuthService {
 
     const { password: _, ...result } = user;
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    console.log('🔑 Login JWT Payload:', payload);
     const token = await this.jwtService.signAsync(payload);
 
     return {
       access_token: token,
     };
+  }
+
+
+  async profile({ email, role }: { email: string, role: string }) {
+
+    // if (role !== 'admin') {
+    //   throw new UnauthorizedException('You do not have permission to access this resource');
+    // }
+
+    return await this.usersService.findOneByEmail(email);
   }
 
 }

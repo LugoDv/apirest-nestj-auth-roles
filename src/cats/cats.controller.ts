@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('cats')
 export class CatsController {
@@ -12,6 +14,8 @@ export class CatsController {
     return this.catsService.create(createCatDto);
   }
 
+  @Roles('user')
+  @ApiBearerAuth()
   @Get()
   findAll() {
     return this.catsService.findAll();

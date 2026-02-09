@@ -5,6 +5,9 @@ import { DatabaseModule } from './infra/database.module';
 import { BreedModule } from './breed/breed.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guard/auth.guard';
+import { RolesGuard } from './auth/guard/roles.guard';
 
 
 @Module({
@@ -19,6 +22,15 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule { }
