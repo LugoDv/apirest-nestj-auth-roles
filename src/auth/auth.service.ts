@@ -18,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) { }
 
-  async signup({ name, email, password }: CreateAuthDto): Promise<User> {
+  async signup({ name, email, password }: CreateAuthDto): Promise<Omit<User, 'password'>> {
 
     const user = await this.usersService.findOneByEmail(email);
 
@@ -32,8 +32,9 @@ export class AuthService {
     newUser.password = await bcrypt.hash(password, 10);
 
     const createdUser = await this.usersService.create(newUser);
+    const { password: _, ...result } = createdUser;
 
-    return createdUser;
+    return result as Omit<User, 'password'>;
   }
 
   async login({ email, password }: LoginDto): Promise<{ access_token: string }> {

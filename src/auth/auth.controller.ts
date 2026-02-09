@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guard/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -20,8 +21,9 @@ export class AuthController {
   }
 
 
-  @Get('profile')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Get('profile')
   profile(@Request() req): Request {
 
 
