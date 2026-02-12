@@ -1,4 +1,6 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Cat } from "src/cats/entities/cat.entity";
+import { UserRole } from "src/common/enums/rol.enum";
+import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -14,8 +16,11 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ default: "user" })
-  role: string;
+  @Column({ default: UserRole.USER, enum: UserRole })
+  role: UserRole;
+
+  @OneToMany(() => Cat, (cat) => cat.user)
+  cats: Cat[];
 
   @DeleteDateColumn()
   deletedAt: Date;

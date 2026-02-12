@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsPositive, IsString, MinLength } from "class-validator";
 
 export class CreateCatDto {
 
@@ -13,4 +13,6 @@ export class CreateCatDto {
   @IsNumber()
   @IsOptional()
   breedId?: number;
+
+
 }

@@ -7,6 +7,8 @@ import { LoginDto } from './dto/login.dto';
 
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UserRole } from '../common/enums/rol.enum';
+import type { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
 
 
 
@@ -18,7 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) { }
 
-  async signup({ name, email, password }: CreateAuthDto): Promise<Omit<User, 'password'>> {
+  async signup({ name, email, password, role }: CreateAuthDto): Promise<Omit<User, 'password'>> {
 
     const user = await this.usersService.findOneByEmail(email);
 
@@ -30,9 +32,12 @@ export class AuthService {
     newUser.name = name;
     newUser.email = email;
     newUser.password = await bcrypt.hash(password, 10);
+    newUser.role = role || UserRole.USER;
 
     const createdUser = await this.usersService.create(newUser);
+
     const { password: _, ...result } = createdUser;
+
 
     return result as Omit<User, 'password'>;
   }
@@ -62,7 +67,7 @@ export class AuthService {
   }
 
 
-  async profile({ email, role }: { email: string, role: string }) {
+  async profile({ email, role }: ActiveUserInterface) {
 
     // if (role !== 'admin') {
     //   throw new UnauthorizedException('You do not have permission to access this resource');

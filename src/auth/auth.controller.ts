@@ -7,13 +7,15 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Roles } from './decorators/roles.decorator';
 import { Public } from './decorators/public.decorator';
-import { UserRole as Role } from './enums/rol.enum';
+import { UserRole as Role } from '../common/enums/rol.enum';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import type { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
 
 interface RequestWithUser extends Request {
   user: {
     id: number;
     email: string;
-    role: string;
+    role: Role;
   }
 }
 
@@ -36,10 +38,9 @@ export class AuthController {
   @Roles(Role.USER)
   @ApiBearerAuth()
   @Get('profile')
-  profile(@Req() req: RequestWithUser) {
+  profile(@ActiveUser() user: ActiveUserInterface) {
 
-
-    return this.authService.profile(req.user);
+    return this.authService.profile(user);
 
   }
 }

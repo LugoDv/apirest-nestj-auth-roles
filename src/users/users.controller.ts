@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { UserRole } from 'src/auth/enums/rol.enum';
+import { UserRole } from 'src/common/enums/rol.enum';
 
 @Controller('users')
 export class UsersController {
@@ -15,7 +15,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Roles(UserRole.USER)
+  @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @Get()
   findAll() {
@@ -27,6 +27,8 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  @Roles(UserRole.USER)
+  @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);

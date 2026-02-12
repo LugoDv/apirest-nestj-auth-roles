@@ -22,16 +22,29 @@ export class UsersService {
     return await this.userRepository.findOneBy({ email: email });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[] | []> {
+    return await this.userRepository.find({
+      select: { id: true, name: true, email: true, role: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id: id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+
+    const user = await this.userRepository.preload({
+      id: id,
+      ...updateUserDto
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return await this.userRepository.update(id, updateUserDto);
   }
 
   remove(id: number) {

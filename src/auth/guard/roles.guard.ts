@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorators/roles.decorator";
 import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
-import { UserRole } from "../enums/rol.enum";
+import { UserRole } from "../../common/enums/rol.enum";
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
 
-    console.log('👮 RolesGuard ejecutándose...');
+    console.log(' RolesGuard ejecutándose...');
 
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -34,9 +34,16 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
+
     const { user } = context.switchToHttp().getRequest();
 
-    console.log('🔍 RolesGuard Debug:');
+    if (user.role === UserRole.ADMIN) {
+      console.log('✅ Usuario admin, acceso permitido');
+      return true;
+    }
+
+
+    console.log(' RolesGuard Debug:');
 
     console.log('Match:', requiredRole === user?.role);
 
