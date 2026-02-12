@@ -1,0 +1,19 @@
+name: CI/CD Pipeline # El nombre que verás en la pestaña 'Actions'
+
+on:
+  push:
+    branches: ['main'] # Se activa cuando subes código a la rama main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # La máquina virtual que nos presta GitHub
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Paso 1: GitHub descarga tu código en su máquina
+
+      - name: Log in to Docker Hub # Paso 2: Nos autenticamos en Docker Hub para poder subir la imagen
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
