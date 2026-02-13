@@ -23,13 +23,128 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API REST desarrollada con [NestJS](https://github.com/nestjs/nest) que implementa autenticación con **JWT (JSON Web Tokens)** y control de acceso basado en **roles**.
+
+### ✨ Características Principales
+
+- **API REST** - Endpoints estructurados para gestionar usuarios, gatos y razas
+- **Autenticación JWT** - Sistema seguro de autenticación basado en tokens
+- **Control de Roles** - Autorización basada en roles de usuario (ADMIN, USER)
+- **Guardias** - Protección de rutas con `AuthGuard` y `RolesGuard`
+- **TypeScript** - Código completamente tipado
+- **Base de Datos** - Integración con TypeORM
+- **Dockerizado** - Incluye `Dockerfile` y `docker-compose.yml` para facilitar el deployment
+- **CI/CD Automatizado** - Pipeline con GitHub Actions (`main.yml`) para build y deploy automático a AWS EC2
+
+### 📦 Stack Tecnológico
+
+| Componente      | Tecnología          |
+| --------------- | ------------------- |
+| Backend         | NestJS + TypeScript |
+| Base de Datos   | PostgreSQL          |
+| ORM             | TypeORM             |
+| Autenticación   | JWT                 |
+| Contenerización | Docker              |
+| Orquestación    | Docker Compose      |
+| CI/CD           | GitHub Actions      |
+| Hosting         | AWS EC2             |
+
+## 📚 Propósito del Repositorio
+
+Este repositorio es una **guía completa y práctica** que demuestra cómo realizar un deploy automático usando **GitHub Actions y AWS EC2**.
+
+El proyecto combina:
+
+- Una aplicación NestJS ejemplo (API REST con JWT y Roles)
+- Configuración Docker completa
+- Pipeline CI/CD automatizado en GitHub Actions
+- Documentación detallada paso a paso
+
+### 📖 Documentación
+
+Toda la documentación está disponible en la carpeta `docs/`:
+
+- **[CI-CD-GUIDE.md](docs/CI-CD-GUIDE.md)** - Guía completa explicando cada paso del pipeline de GitHub Actions
+- **[auth-implementation-guide.md](docs/auth-implementation-guide.md)** - Documentación de la implementación de autenticación JWT
+
+**Ideal para aprender:**
+
+- Cómo configurar un workflow en GitHub Actions
+- Cómo crear imágenes Docker y subirlas a Docker Hub
+- Cómo desplegar en AWS EC2 automáticamente
+- Cómo implementar autenticación JWT en NestJS
+
+## 🔧 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- **Node.js** (v18 o superior) - [Descargar](https://nodejs.org/)
+- **pnpm** - Instalar con: `npm install -g pnpm`
+- **PostgreSQL** (v14 o superior) - [Descargar](https://www.postgresql.org/download/)
+- **Docker & Docker Compose** (Opcional, para desarrollo local) - [Descargar](https://www.docker.com/)
+- **Git** - [Descargar](https://git-scm.com/)
 
 ## Project setup
 
 ```bash
 $ pnpm install
 ```
+
+## Environment Configuration
+
+Para ejecutar el proyecto en modo **desarrollo**, debes crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```env
+# Base de Datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=tu_usuario_db
+DB_PASSWORD=tu_contraseña_db
+DB_NAME=nombre_tu_base_datos
+
+# Autenticación
+JWT_SECRET=tu_secret_muy_seguro
+
+# Docker Hub (opcional - solo para CI/CD)
+DOCKERHUB_USERNAME=tu_usuario_dockerhub
+DOCKERHUB_TOKEN=tu_token_dockerhub
+```
+
+**Variables obligatorias:**
+
+- `DB_*` - Configuración de la base de datos PostgreSQL
+- `JWT_SECRET` - Clave secreta para firmar tokens JWT (mínimo 20 caracteres)
+
+**Variables opcionales:**
+
+- `DOCKERHUB_*` - Solo necesarias si vas a usar el CI/CD con Docker Hub
+
+### Opción 1: PostgreSQL Local
+
+Si tienes PostgreSQL instalado localmente, crea la base de datos:
+
+```bash
+# Acceder a PostgreSQL
+psql -U postgres
+
+# Crear la base de datos
+CREATE DATABASE nombre_tu_base_datos;
+
+# Crear usuario (opcional)
+CREATE USER tu_usuario_db WITH PASSWORD 'tu_contraseña_db';
+GRANT ALL PRIVILEGES ON DATABASE nombre_tu_base_datos TO tu_usuario_db;
+```
+
+### Opción 2: PostgreSQL con Docker (Recomendado)
+
+Usa el `docker-compose.yml` incluido para levantar PostgreSQL automáticamente:
+
+```bash
+# Levanta solo la base de datos
+docker-compose up -d db
+```
+
+Esto creará automáticamente una base de datos PostgreSQL con las variables configuradas en el `.env`.
 
 ## Compile and run the project
 
@@ -44,6 +159,50 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
+## � Running with Docker
+
+### Desarrollo Local con Docker Compose
+
+Puedes ejecutar toda la aplicación (API + Base de Datos) usando Docker:
+
+```bash
+# Levantar todos los servicios
+docker-compose up -d
+
+# Ver los logs
+docker-compose logs -f
+
+# Detener los servicios
+docker-compose down
+```
+
+La aplicación estará disponible en `http://localhost:3000`
+
+### Build de imagen Docker manualmente
+
+```bash
+# Construir la imagen
+docker build -t nest-api-auth .
+
+# Ejecutar el contenedor
+docker run -p 3000:3000 --env-file .env nest-api-auth
+```
+
+## API Documentation
+
+Esta API está documentada con **Swagger**. Una vez que ejecutes el servidor, puedes acceder a la documentación interactiva en:
+
+```
+http://localhost:3000/api/docs
+```
+
+En Swagger UI podrás:
+
+- Ver todos los endpoints disponibles
+- Probar los endpoints directamente desde la interfaz
+- Ver los schemas de las request y response
+- Entender los parámetros requeridos y opcionales
+
 ## Run tests
 
 ```bash
@@ -57,41 +216,56 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
-## Deployment
+## 🚀 Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Este proyecto incluye un **pipeline CI/CD completo** configurado con GitHub Actions que automatiza el deploy a AWS EC2.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Flujo automático:
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
+1. Push a la rama `main`
+2. GitHub Actions construye la imagen Docker
+3. La imagen se sube a Docker Hub
+4. Se despliega automáticamente en AWS EC2
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Configuración del Deployment:
 
-## Resources
+Para configurar el deployment automático, consulta la **[Guía completa de CI/CD](docs/CI-CD-GUIDE.md)** donde encontrarás:
 
-Check out a few resources that may come in handy when working with NestJS:
+- Cómo configurar los Secrets en GitHub
+- Explicación detallada del workflow `.github/workflows/main.yml`
+- Setup de AWS EC2
+- Troubleshooting y solución de problemas
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+**Archivos clave:**
 
-## Support
+- `.github/workflows/main.yml` - Pipeline de CI/CD
+- `Dockerfile` - Configuración de la imagen Docker
+- `docker-compose.yml` - Orquestación de servicios
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 🔮 Futuras Implementaciones
 
-## Stay in touch
+Este proyecto es funcional pero hay mejoras pendientes para hacerlo production-ready:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Autenticación Avanzada
+
+- **Passport.js Integration** - Migrar la autenticación actual a usar `@nestjs/passport` para mayor flexibilidad y soporte de múltiples estrategias (JWT, OAuth, etc.)
+- **Refresh Token** - Implementar sistema de refresh tokens para renovar el access token sin que el usuario deba autenticarse nuevamente
+  - Tokens de corta duración (access token: 15 min)
+  - Refresh token de larga duración (7-30 días)
+  - Endpoint `/auth/refresh` para obtener nuevo access token
+  - Almacenamiento seguro de refresh tokens
+
+### Otras Mejoras Planeadas
+
+- Tests automáticos en el pipeline CI/CD
+- Versionado de API (v1, v2)
+- Rate limiting y throttling
+- Logging estructurado con Winston
+- Health checks endpoints
+- Migraciones de base de datos automáticas
+- Monitoreo y alertas
+
+**Contribuciones:** Si quieres implementar alguna de estas features, ¡los PRs son bienvenidos! 🚀
 
 ## License
 
