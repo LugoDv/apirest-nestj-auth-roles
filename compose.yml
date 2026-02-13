@@ -1,28 +1,34 @@
 services:
   app:
-    build: .
+    image: ${DOCKERHUB_USERNAME}/nest-api-auth:latest # Usamos la imagen de la nube
     ports:
       - '3000:3000'
-    env_file:
-      - .env # Esto carga automáticamente el archivo .env en el contenedor
     environment:
-      - DB_HOST=db-service # Sobrescribimos el host para que apunte al contenedor
+      - DB_HOST=db-service
+      - DB_PORT=5432
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - db-service
+    networks:
+      - nest-network
 
   db-service:
     image: postgres:15-alpine
-    env_file:
-      - .env
     environment:
-      # Mapeamos las variables del .env a las que Postgres espera internamente
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USERNAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    networks:
+      - nest-network
+
+networks:
+  nest-network:
+    driver: bridge
 
 volumes:
   pgdata:
